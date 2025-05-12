@@ -1,0 +1,144 @@
+def lambda_handler(event, context):
+    return handle_menu_info_intent(event['sessionState']['intent']['slots'])
+
+def handle_menu_info_intent(slots):
+    intent_name = "MenuInfo"
+
+    # Menu data from provided CSV
+    menu = {
+        "iced chai tea latte": {"item_id": "CH", "category": "Teas & Refreshers", "tall": 5.25, "grande": 5.95, "trenta": 7.45, "venti": 6.25},
+        "cold brew": {"item_id": "CB", "category": "Cold Coffees", "tall": 3.65, "grande": 4.25, "trenta": 5.65, "venti": 4.95},
+        "caffe americano": {"item_id": "A", "category": "Hot Coffees", "tall": 2.65, "grande": 3.15, "trenta": 4.65, "venti": 3.65},
+        "double-smoked bacon, cheddar & egg sandwich": {"item_id": "DSB", "category": "Food", "price": 5.75},
+        "white chocolate mocha frappuccino": {"item_id": "FWM", "category": "Frappuccino", "tall": 5.25, "grande": 5.75, "trenta": 7.45, "venti": 6.25},
+        "vanilla sweet cream cold brew": {"item_id": "VSCB", "category": "Cold Coffees", "tall": 4.15, "grande": 4.65, "trenta": 6.25, "venti": 5.25},
+        "iced passion tango tea": {"item_id": "PT", "category": "Teas & Refreshers", "tall": 3.45, "grande": 4.15, "trenta": 5.25, "venti": 4.45},
+        "dark chocolate covered espresso beans": {"item_id": "DCEB", "category": "Food", "price": 3.25},
+        "cranmerry orange refresher": {"item_id": "CMOR", "category": "Seasonal & Limited-Time", "tall": 4.45, "grande": 5.15, "trenta": 6.25, "venti": 5.45},
+        "iced matcha green tea latte": {"item_id": "GRTL", "category": "Teas & Refreshers", "tall": 4.45, "grande": 5.15, "trenta": 6.45, "venti": 5.45},
+        "bacon, gouda & egg sandwich": {"item_id": "BGE", "category": "Food", "price": 5.25},
+        "kind salted caramel & dark chocolate nut bar": {"item_id": "KIND", "category": "Food", "price": 2.75},
+        "spinach, feta & egg white wrap": {"item_id": "SFW", "category": "Food", "price": 4.75},
+        "flat white": {"item_id": "FW", "category": "Hot Coffees", "tall": 4.15, "grande": 4.75, "trenta": 6.75, "venti": 5.25},
+        "caramel frappuccino": {"item_id": "FCM", "category": "Frappuccino", "tall": 4.95, "grande": 5.45, "trenta": 6.75, "venti": 5.95},
+        "iced lemon pound cake": {"item_id": "LL", "category": "Food", "price": 3.45},
+        "pistachio latte": {"item_id": "PSL", "category": "Seasonal & Limited-Time", "tall": 5.75, "grande": 6.25, "trenta": 7.75, "venti": 6.75},
+        "mocha cookie crumble frappuccino": {"item_id": "FMCN", "category": "Frappuccino", "tall": 5.45, "grande": 5.95, "trenta": 7.25, "venti": 6.45},
+        "turkey, provolone & pesto on ciabatta": {"item_id": "TPP", "category": "Food", "price": 8.95},
+        "java chip frappuccino": {"item_id": "FJV", "category": "Frappuccino", "tall": 5.25, "grande": 5.75, "trenta": 7.45, "venti": 6.25},
+        "butter croissant": {"item_id": "Ct", "category": "Food", "price": 4.25},
+        "sausage, cheddar & egg sandwich": {"item_id": "SCE", "category": "Food", "price": 4.75},
+        "iced caramel macchiato": {" monarchyitem_id": "ICM", "category": "Cold Coffees", "tall": 5.45, "grande": 6.15, "trenta": 7.25, "venti": 6.45},
+        "tomato & mozzarella on focaccia": {"item_id": "TMF", "category": "Food", "price": 8.75},
+        "mocha frappuccino": {"item_id": "FMC", "category": "Frappuccino", "tall": 4.95, "grande": 5.45, "trenta": 6.75, "venti": 5.95},
+        "cappuccino": {"item_id": "C", "category": "Hot Coffees", "tall": 3.35, "grande": 4.15, "trenta": 5.75, "venti": 4.75},
+        "strawberry acai lemonade refresher": {"item_id": "SAR", "category": "Teas & Refreshers", "tall": 4.45, "grande": 5.15, "trenta": 6.25, "venti": 5.45},
+        "iced caffe latte": {"item_id": "IL", "category": "Cold Coffees", "tall": 4.45, "grande": 5.15, "trenta": 6.45, "venti": 5.65},
+        "cream cold brew": {"item_id": "CCB", "category": "Seasonal & Limited-Time", "tall": 4.95, "grande": 5.45, "trenta": 6.75, "venti": 5.95},
+        "turkey bacon, cheddar & egg white sandwich": {"item_id": "TBC", "category": "Food", "price": 4.75},
+        "caffe latte": {"item_id": "L", "category": "Hot Coffees", "tall": 3.35, "grande": 4.15, "trenta": 5.75, "venti": 4.75},
+        "blueberry muffin": {"item_id": "BSC", "category": "Food", "price": 4.75},
+        "mango dragonfruit lemonade refresher": {"item_id": "MDR", "category": "Teas & Refreshers", "tall": 4.95, "grande": 5.65, "trenta": 6.75, "venti": 5.95},
+        "chocolate croissant": {"item_id": "ChCt", "category": "Food", "price": 3.75},
+        "vanilla bean creme frappuccino": {"item_id": "FVC", "category": "Frappuccino", "tall": 4.75, "grande": 5.25, "trenta": 6.45, "venti": 5.75},
+        "caramel macchiato": {"item_id": "CM", "category": "Hot Coffees", "tall": 4.35, "grande": 4.95, "trenta": 6.25, "venti": 5.25},
+        "chocolate chip brownie": {"item_id": "BCC", "category": "Food", "price": 3.95},
+        "strawberry creme frappuccino": {"item_id": "FMST", "category": "Frappuccino", "tall": 4.95, "grande": 5.45, "trenta": 6.75, "venti": 5.95},
+        "white chocolate mocha": {"item_id": "WM", "category": "Hot Coffees", "tall": 4.55, "grande": 5.15, "trenta": 6.45, "venti": 5.45},
+        "iced white chocolate mocha": {"item_id": "IWM", "category": "Cold Coffees", "tall": 5.75, "grande": 6.45, "trenta": 7.45, "venti": 6.75}
+    }
+
+    # Categories that require size selection
+    drink_categories = ["Teas & Refreshers", "Cold Coffees", "Hot Coffees", "Frappuccino", "Seasonal & Limited-Time"]
+
+    try:
+        # Handle user inputs for required slots
+        if not slots.get("FirstName"):
+            return elicit_slot(intent_name, slots, "FirstName", "Alright! Let's begin with your name. Could you confirm your full name, please?")
+
+        if not slots.get("Takingorder"):
+            return elicit_slot(intent_name, slots, "Takingorder", "Craving something delicious? 😋 Let me know your order! You can also browse our menu online for ideas.")
+
+        # Get and validate ordering item
+        ordering_item = slots["Takingorder"].get("value", {}).get("interpretedValue", "").strip().lower()
+        if ordering_item not in menu:
+            return elicit_slot(intent_name, slots, "Takingorder", "Sorry, I couldn't find that item on our menu. Please choose something from our food or drink menu.")
+
+        # Get item details
+        item_details = menu[ordering_item]
+        is_drink = item_details["category"] in drink_categories
+
+        # Ask for size only if it's a drink
+        if is_drink and not slots.get("Itemsize"):
+            return elicit_slot(intent_name, slots, "Itemsize", "What size would you like? Tall (12 oz), Grande (16 oz), Trenta (30 oz), or Venti (20 oz)?")
+
+        # Validate Itemsize if provided
+        if is_drink and slots.get("Itemsize"):
+            size = slots["Itemsize"].get("value", {}).get("interpretedValue", "").strip().lower()
+            valid_sizes = ["tall", "grande", "trenta", "venti"]
+            if size not in valid_sizes:
+                return elicit_slot(intent_name, slots, "Itemsize", "Please choose a valid size: Tall (12 oz), Grande (16 oz), Trenta (30 oz), or Venti (20 oz).")
+
+        if not slots.get("Specialinstructions"):
+            return elicit_slot(intent_name, slots, "Specialinstructions", "Any special instructions for your order?")
+
+        if not slots.get("Anythingesle"):
+            return elicit_slot(intent_name, slots, "Anythingesle", "Anything else to make your order even better? 🍪☕")
+
+        if not slots.get("Ordertype"):
+            return elicit_slot(intent_name, slots, "Ordertype", "Is this order for dine-in or takeaway?")
+
+        # Validate Ordertype
+        if slots.get("Ordertype"):
+            order_type = slots["Ordertype"].get("value", {}).get("interpretedValue", "").strip().lower()
+            valid_order_types = ["dine-in", "takeaway"]
+            if order_type not in valid_order_types:
+                return elicit_slot(intent_name, slots, "Ordertype", "Please specify if the order is for dine-in or takeaway.")
+            # Acknowledge valid Ordertype
+            return elicit_slot(intent_name, slots, "PickupTime", f"Got it, your order is for {order_type}. Let us know what time you’ll swing by!")
+
+       
+        # Final Fulfillment once all slots are filled
+        return {
+            "sessionState": {
+                "dialogAction": {
+                    "type": "Close",
+                    "completionStatus": "Fulfilled"
+                },
+                "intent": {
+                    "name": intent_name,
+                    "state": "Fulfilled",
+                    "slots": slots
+                }
+            },
+            "messages": [
+                {
+                    "contentType": "PlainText",
+                    "content": "Before leaving the store, please check out at the counter to complete your purchase."
+                }
+            ]
+        }
+
+    except Exception as e:
+        return elicit_slot(intent_name, slots, "Takingorder", f"Sorry, something went wrong: {str(e)}. Please try again.")
+
+def elicit_slot(intent_name, slots, slot_to_elicit, message):
+    return {
+        "sessionState": {
+            "dialogAction": {
+                "type": "ElicitSlot",
+                "slotToElicit": slot_to_elicit
+            },
+            "intent": {
+                "name": intent_name,
+                "state": "InProgress",
+                "slots": slots
+            }
+        },
+        "messages": [
+            {
+                "contentType": "PlainText",
+                "content": message
+            }
+        ]
+    }
